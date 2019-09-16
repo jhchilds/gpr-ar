@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Net.Http;
@@ -43,7 +44,7 @@ public class PoseData : MonoBehaviour
     	qw = Frame.Pose.rotation.w;
 
     	makePostRequest(x,y,z,qx,qy,qz,qw);
-
+    	// makeGetRequest();
         
     }
 
@@ -72,14 +73,29 @@ public class PoseData : MonoBehaviour
 
 		};
 
+		
+
 		var content = new FormUrlEncodedContent(values);
 
-		var response = await client.PostAsync("http://www.jhchilds.w3.uvm.edu", content);
+		var response = await client.PostAsync("http://jhchilds.w3.uvm.edu/", content);
 
 		var responseString = await response.Content.ReadAsStringAsync();
 
 		Debug.Log(responseString);
 
     }
+
+
+     async void makeGetRequest(){
+
+     	HttpResponseMessage response = await client.GetAsync("http://jhchilds.w3.uvm.edu");
+    	response.EnsureSuccessStatusCode();
+     	string responseBody = await response.Content.ReadAsStringAsync();
+     	Debug.Log(responseBody);
+
+
+     }
+
+
 
 }
