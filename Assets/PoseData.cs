@@ -48,7 +48,9 @@ public class PoseData : MonoBehaviour
         
     }
 
-
+    /// <summary>
+    /// making a TCP Connection for possible web socket needs
+    /// </summary>
     void makeTCPConnection(){
 
 
@@ -77,7 +79,7 @@ public class PoseData : MonoBehaviour
 
 		var content = new FormUrlEncodedContent(values);
 
-		var response = await client.PostAsync("http://jhchilds.w3.uvm.edu/", content);
+		var response = await client.PostAsync("http://10.245.194.206:1142/stream", content);
 
 		var responseString = await response.Content.ReadAsStringAsync();
 
