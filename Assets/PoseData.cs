@@ -13,6 +13,9 @@ public class PoseData : MonoBehaviour
 
 	private static readonly HttpClient client = new HttpClient();
 
+	private float timer = 0.0f;
+	private float waitTime = .1f;
+
 	private	float x;
 	private float y;
 	private float z;
@@ -20,6 +23,13 @@ public class PoseData : MonoBehaviour
 	private float qy;
 	private float qz;
 	private float qw;
+	private List<float> xArray = new List<float>();
+	private List<float> yArray = new List<float>();
+	private List<float> zArray = new List<float>();
+	private List<float> qxArray = new List<float>();
+	private List<float> qyArray = new List<float>();
+	private List<float> qzArray = new List<float>();
+	private List<float> qwArray = new List<float>();
 
     // Start is called before the first frame update
     void Start()
@@ -34,6 +44,9 @@ public class PoseData : MonoBehaviour
     /// </summary>
     void Update()
     {
+    	timer += Time.deltaTime;
+
+
 
     	x = Frame.Pose.position.x;
     	y = Frame.Pose.position.y;
@@ -43,8 +56,16 @@ public class PoseData : MonoBehaviour
     	qz = Frame.Pose.rotation.z;
     	qw = Frame.Pose.rotation.w;
 
-    	makePostRequest(x,y,z,qx,qy,qz,qw);
-    	// makeGetRequest();
+    	
+
+    	
+    	//Only send a post request after a timed period because 60 fps will cuase server overload.
+    	if (timer > waitTime){
+
+    		makePostRequest();
+    		timer = timer - waitTime;
+
+    	}
         
     }
 
@@ -62,7 +83,7 @@ public class PoseData : MonoBehaviour
 
     }
 
-    async void makePostRequest(float x,float y,float z,float qx,float qy,float qz,float qw){
+    async void makePostRequest(){
 
     	var values = new Dictionary<string, string>{
 			{ "x", x.ToString("R") },
@@ -79,7 +100,7 @@ public class PoseData : MonoBehaviour
 
 		var content = new FormUrlEncodedContent(values);
 
-		var response = await client.PostAsync("http://10.245.194.206:1142/stream", content);
+		var response = await client.PostAsync("http://10.245.201.158:1142/stream", content);
 
 		var responseString = await response.Content.ReadAsStringAsync();
 
@@ -94,6 +115,23 @@ public class PoseData : MonoBehaviour
     	response.EnsureSuccessStatusCode();
      	string responseBody = await response.Content.ReadAsStringAsync();
      	Debug.Log(responseBody);
+
+
+     }
+
+     void dataBuffer(){ //TODO: Build Data buffer 
+
+
+     	xArray.Add(x);
+    	yArray.Add(y);
+    	zArray.Add(z);
+    	qxArray.Add(qx);
+    	qyArray.Add(qy);
+    	qzArray.Add(qz);
+    	qwArray.Add(qw);
+
+
+
 
 
      }
