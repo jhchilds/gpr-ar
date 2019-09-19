@@ -20,8 +20,11 @@
 namespace GoogleARCore.Examples.Common
 {
     using System.Collections.Generic;
+    using System.Collections;
     using System.Linq;
     using UnityEngine;
+    using System.Text;
+    using UnityEngine.Networking;
 
     /// <summary>
     /// Visualizes the feature points for spatial mapping, showing a pop animation when they appear.
@@ -117,6 +120,8 @@ namespace GoogleARCore.Examples.Common
         /// </summary>
         private LinkedList<PointInfo> m_CachedPoints;
 
+        private List<Dictionary<string, string>> pointCloudDictList = new List<Dictionary<string, string>>();
+
         /// <summary>
         /// The Unity Start() method.
         /// </summary>
@@ -186,8 +191,64 @@ namespace GoogleARCore.Examples.Common
                 _AddAllPointsToCache();
             }
 
+            
+
             _UpdateMesh();
+
+            //cachedPointsToArray();
+
         }
+
+        /// <summary>
+        /// Converts the PointCloud points LinkedList (every Frame) into an Array for easier processing server-side
+        /// </summary>
+        private void cachedPointsToArray(){
+            PointInfo[] pointArray = new PointInfo[m_CachedPoints.Count];
+            m_CachedPoints.CopyTo(pointArray,0);
+
+
+            //postPointCloudData(pointArray);
+
+           
+        }
+
+        /// <summary>
+        /// Converts the PointCloud points LinkedList (every Frame) into an Array for easier processing server-side
+        /// </summary>
+        private void postPointCloudData(PointInfo[] pointArray){
+
+            foreach(PointInfo point in pointArray){
+                 
+                 var pointDictionary = new Dictionary<string, string>{
+                        { "x", point.Position[0].ToString("R") },
+                        { "y",  point.Position[1].ToString("R") },
+                        { "z",  point.Position[2].ToString("R") },
+                        { "sizeX",  point.Size[0].ToString("R") },
+                        { "sizey",  point.Size[1].ToString("R") },
+                        { "creationTime",  point.CreationTime.ToString("R") }
+                 };
+
+                 pointCloudDictList.Add(pointDictionary);
+
+            }
+
+           
+
+           
+
+            // var content = new FormUrlEncodedContent(pointArray);
+
+            // var response = await client.PostAsync("http://10.245.201.158:1142/stream", content);
+
+            // var responseString = await response.Content.ReadAsStringAsync();
+
+            // Debug.Log(responseString);
+
+
+
+        }
+
+
 
         /// <summary>
         /// Clears all cached feature points.
@@ -269,6 +330,8 @@ namespace GoogleARCore.Examples.Common
 
             m_CachedPoints.AddLast(new PointInfo(point, new Vector2(m_DefaultSize, m_DefaultSize),
                                                  Time.time));
+
+
         }
 
         /// <summary>
@@ -319,7 +382,14 @@ namespace GoogleARCore.Examples.Common
             m_Mesh.uv = m_CachedPoints.Select(p => p.Size).ToArray();
             m_Mesh.SetIndices(Enumerable.Range(0, m_CachedPoints.Count).ToArray(),
                               MeshTopology.Points, 0);
+
         }
+
+
+
+
+
+        
 
         /// <summary>
         /// Contains the information of a feature point.

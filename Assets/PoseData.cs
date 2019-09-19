@@ -8,6 +8,8 @@ using System.Net.Http;
 using GoogleARCore;
 using GoogleARCore.Examples.Common;
 
+
+
 public class PoseData : MonoBehaviour
 {
 
@@ -23,13 +25,6 @@ public class PoseData : MonoBehaviour
 	private float qy;
 	private float qz;
 	private float qw;
-	private List<float> xArray = new List<float>();
-	private List<float> yArray = new List<float>();
-	private List<float> zArray = new List<float>();
-	private List<float> qxArray = new List<float>();
-	private List<float> qyArray = new List<float>();
-	private List<float> qzArray = new List<float>();
-	private List<float> qwArray = new List<float>();
 
     // Start is called before the first frame update
     void Start()
@@ -40,14 +35,35 @@ public class PoseData : MonoBehaviour
 
     // Update is called once per frame
     /// <summary>
-    /// Collect Pose data evey frame and send to Web Application hosted on the UVM Silk Server
+    /// Collect Pose data evey frame and send to Web Application 
     /// </summary>
     void Update()
     {
+
+    	setTimer();
+    	
+
+    	setPosePositions();
+
+    	timedPostPoseData();
+    	
+    	
+        
+    }
+
+    /// <summary>
+    /// Set Timer for POST REQUEST
+    /// </summary>
+    void setTimer(){
+
     	timer += Time.deltaTime;
 
+    }
 
-
+    /// <summary>
+    /// Set POSE positions to position of the Frame before POST REQUEST
+    /// </summary>
+    void setPosePositions(){
     	x = Frame.Pose.position.x;
     	y = Frame.Pose.position.y;
     	z = Frame.Pose.position.z;
@@ -55,35 +71,28 @@ public class PoseData : MonoBehaviour
     	qy = Frame.Pose.rotation.y;
     	qz = Frame.Pose.rotation.z;
     	qw = Frame.Pose.rotation.w;
-
-    	
-
-    	
-    	//Only send a post request after a timed period because 60 fps will cuase server overload.
-    	if (timer > waitTime){
-
-    		makePostRequest();
-    		timer = timer - waitTime;
-
-    	}
-        
     }
 
     /// <summary>
-    /// making a TCP Connection for possible web socket needs
+    /// Make Timed HTTP Request so the server does not overload
     /// </summary>
-    void makeTCPConnection(){
+    void timedPostPoseData(){
 
+    	//Only send a post request after a timed period because 60 fps will cuase server overload.
+    	if (timer > waitTime){
 
-    	TcpClient tcpClient = new TcpClient ();
-		IPAddress ipAddress = Dns.GetHostEntry ("www.jhchilds.w3.uvm.edu").AddressList[0];
-		IPEndPoint ipEndPoint = new IPEndPoint (ipAddress, 5000);
+    		postPoseData();
+    		timer = timer - waitTime;
 
-		tcpClient.Connect (ipAddress, 5000);
+    	}
 
     }
 
-    async void makePostRequest(){
+
+
+
+
+    async void postPoseData(){
 
     	var values = new Dictionary<string, string>{
 			{ "x", x.ToString("R") },
@@ -119,22 +128,7 @@ public class PoseData : MonoBehaviour
 
      }
 
-     void dataBuffer(){ //TODO: Build Data buffer 
-
-
-     	xArray.Add(x);
-    	yArray.Add(y);
-    	zArray.Add(z);
-    	qxArray.Add(qx);
-    	qyArray.Add(qy);
-    	qzArray.Add(qz);
-    	qwArray.Add(qw);
-
-
-
-
-
-     }
+     
 
 
 
