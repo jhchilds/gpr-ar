@@ -40,12 +40,12 @@ public class PoseData : MonoBehaviour
     void Update()
     {
 
-    	setTimer();
+    	// setTimer();
     	
 
-    	setPosePositions();
+    	// setPosePositions();
 
-    	timedPostPoseData();
+    	// timedPostPoseData();
     	
     	
         

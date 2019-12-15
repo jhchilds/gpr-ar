@@ -69,6 +69,7 @@ public class TerminalController : MonoBehaviour
 	public void showDevices ()
 	{
 		BluetoothAdapter.showDevices ();//show a list of all devices//any picked device will be sent to this.HandleOnDevicePicked()
+		Debug.Log("Show Devices Clicked");
 	}
 
 	public void connect ()//Connect to the public global variable "device" if it's not null.

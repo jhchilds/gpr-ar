@@ -31,7 +31,7 @@ public class BasicDemo : MonoBehaviour {
 
 
 		device.Name = "HC-05";
-		//device.MacAddress = "XX:XX:XX:XX:XX:XX";
+		//device.MacAddress = "20:17:03:20:55:09";
 
 
 
