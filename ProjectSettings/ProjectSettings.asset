@@ -167,7 +167,7 @@ PlayerSettings:
     Android: com.melab.bluetoothposearcore
   buildNumber: {}
   AndroidBundleVersionCode: 1
-  AndroidMinSdkVersion: 26
+  AndroidMinSdkVersion: 23
   AndroidTargetSdkVersion: 26
   AndroidPreferredInstallLocation: 1
   aotOptions: 

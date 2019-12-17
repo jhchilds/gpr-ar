@@ -127,15 +127,20 @@ public class TerminalController : MonoBehaviour
   //Please note that you don't have to use Couroutienes, you can just put your code in the Update() method
   IEnumerator  ManageConnection (BluetoothDevice device)
 	{//Manage Reading Coroutine
+		
 
 		//Switch to Terminal View
-		InfoCanvas.SetActive (false);
+		InfoCanvas.SetActive (false); 
 		// MapCanvas.Map.SetActive(false);
 		DataCanvas.SetActive (true);
 
 		while (device.IsReading) {
+			
+
+
 			if (device.IsDataAvailable) {
 				//because we called setEndByte(10)..read will always return a packet excluding the last byte 10. 10 equals '\n' so it will return lines.
+
 				byte [] msg = device.read ();
 
 				if (msg != null && msg.Length > 0) {
