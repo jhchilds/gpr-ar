@@ -37,10 +37,11 @@ void loop() {
   if (state[0] == 'H') {
     isPaired = !isPaired;
   }
+  
   if (val > 500) {
     digitalWrite(LED_BUILTIN, HIGH);
-     mySerial.println('X');
-     firstSend = false;
+    mySerial.println('X');
+    firstSend = false;
   } else {
     digitalWrite(LED_BUILTIN, LOW);
     firstSend = true;
