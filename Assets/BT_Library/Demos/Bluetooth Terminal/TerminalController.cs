@@ -97,19 +97,20 @@ public class TerminalController : MonoBehaviour
   {
       if (device != null && !string.IsNullOrEmpty(dataToSend.text))
       {
-          device.send(System.Text.Encoding.ASCII.GetBytes("A" + (char)10));//10 is our seperator Byte (sepration between packets)
+          device.send(System.Text.Encoding.ASCII.GetBytes("Y" + (char)10));//10 is our seperator Byte (sepration between packets)
       }
   }
-
-  public void sendA(string index)
+  //Stopping and starting requires sending the bluetooth the byte equivelant of 'Y'
+  public void toggleStopStartButton(string index)
   {
       try
       {
           if (device != null)
           {
-              device.send_Blocking(System.Text.Encoding.ASCII.GetBytes("A" + (char)10));//10 is our seperator Byte (separation between packets)
-							m_post = false;
-					}
+              device.send_Blocking(System.Text.Encoding.ASCII.GetBytes("Y" + (char)10));//10 is our seperator Byte (separation between packets)
+			  m_post = false;
+
+		  }
       }
       catch (Exception ex)
       {

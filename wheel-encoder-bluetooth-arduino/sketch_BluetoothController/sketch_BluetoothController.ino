@@ -33,15 +33,19 @@ void loop() {
       state[i++] = mySerial.read();
     } while (mySerial.available() > 0 );
   }
-  
-  if (state[0] == 'H') {
+  //The ARCore application should have a button to start or stop the service.
+  //This button should be sending the bytes equivelent to ASCII letter 'Y'
+  //This way you can start and stop when you need to track the data collection with AR Camera
+  if (state[0] == 'Y') {
     isPaired = !isPaired;
   }
   
   if (val > 500) {
     digitalWrite(LED_BUILTIN, HIGH);
-    mySerial.println('X');
-    firstSend = false;
+    if (isPaired && firstSend) {
+      mySerial.println('X');
+      firstSend = false;
+    }
   } else {
     digitalWrite(LED_BUILTIN, LOW);
     firstSend = true;
