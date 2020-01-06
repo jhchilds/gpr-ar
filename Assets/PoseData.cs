@@ -40,10 +40,10 @@ public class PoseData : MonoBehaviour
     void Update()
     {
 
-    	// setTimer();
+    	setTimer();
     	
 
-    	// setPosePositions();
+    	setPosePositions();
 
     	// timedPostPoseData();
     	
@@ -109,7 +109,7 @@ public class PoseData : MonoBehaviour
 
 		var content = new FormUrlEncodedContent(values);
 
-		var response = await client.PostAsync("http://10.245.201.158:1142/stream", content);
+		var response = await client.PostAsync("http://192.168.0.164:1142/stream", content);
 
 		var responseString = await response.Content.ReadAsStringAsync();
 

@@ -1,13 +1,15 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-
 using TechTweaking.Bluetooth;
 using UnityEngine.UI;
-
+using System.Net.Sockets;
+using System.Net.Http;
+using GoogleARCore;
+using GoogleARCore.Examples.Common;
 using System;
+using System.Net;
 using System.IO;
-//using Tango;
 
 public class TerminalController : MonoBehaviour
 {
@@ -23,8 +25,16 @@ public class TerminalController : MonoBehaviour
 	public GameObject MapCanvas;
 	public BluetoothDevice device;
 	public Text dataToSend;
-  public bool m_isConnected = false;
-  public bool m_post = true;
+    public bool m_isConnected = false;
+    public bool m_post = true;
+
+
+	private static readonly HttpClient client = new HttpClient();
+
+
+	private	float x;
+	private float y;
+	private float z;
 
   void Awake ()
 	{
@@ -146,18 +156,18 @@ public class TerminalController : MonoBehaviour
 
 				if (msg != null && msg.Length > 0) {
 					string content = System.Text.ASCIIEncoding.ASCII.GetString(msg);
-					readDataText.add (device.Name, content);
+					readDataText.add ("FROM: " + device.Name, " MESSAGE: " + content);
+					SendPoseToServer();
 
 					string filepath = Application.persistentDataPath + "/read_remote.txt";
-
+					//Arduin BluetoothController is sending 'X' 
 					if (content == "X\r")
 					{
 						m_post = true;
-						using (StreamWriter writer = new StreamWriter(filepath, true))
-	            {
-                writer.WriteLine(String.Format("{0}) Setting post to {1}. Connected: {2}", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), m_post.ToString(), m_isConnected.ToString()));
-                writer.Flush();
-	            }
+						using (StreamWriter writer = new StreamWriter(filepath, true)){
+	                		writer.WriteLine(String.Format("{0}) Setting post to {1}. Connected: {2}", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), m_post.ToString(), m_isConnected.ToString()));
+	                		writer.Flush();
+		            	}
 					}
 				}
 			}
@@ -176,6 +186,32 @@ public class TerminalController : MonoBehaviour
 	{
 		BluetoothAdapter.OnDevicePicked -= HandleOnDevicePicked;
 		BluetoothAdapter.OnDeviceOFF -= HandleOnDeviceOff;
+	}
+
+
+	async void SendPoseToServer ()
+	{
+		x = Frame.Pose.position.x;
+    	y = Frame.Pose.position.y;
+    	z = Frame.Pose.position.z;
+
+
+
+    	var values = new Dictionary<string, string>{
+			{ "x", x.ToString("R") },
+			{ "y", y.ToString("R") },
+			{ "z", z.ToString("R") },
+		};
+
+		
+
+		var content = new FormUrlEncodedContent(values);
+
+		var response = await client.PostAsync("http://192.168.0.164:1142/stream", content);
+
+		var responseString = await response.Content.ReadAsStringAsync();
+
+		Debug.Log(responseString);
 	}
 
 }
