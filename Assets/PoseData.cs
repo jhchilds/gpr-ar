@@ -25,12 +25,12 @@ public class PoseData : MonoBehaviour
 	private float qy;
 	private float qz;
 	private float qw;
+    private float latitude;
 
     // Start is called before the first frame update
     void Start()
     {
-       
-        
+        //StartCoroutine(getLatLong());
     }
 
     // Update is called once per frame
@@ -45,9 +45,10 @@ public class PoseData : MonoBehaviour
 
     	setPosePositions();
 
-    	// timedPostPoseData();
-    	
-    	
+    	timedPostPoseData();
+
+
+       //testLatitude();
         
     }
 
@@ -124,6 +125,82 @@ public class PoseData : MonoBehaviour
     	response.EnsureSuccessStatusCode();
      	string responseBody = await response.Content.ReadAsStringAsync();
      	Debug.Log(responseBody);
+
+
+     }
+
+
+
+
+     async void testLatitude(){
+        
+        if (Input.location.status == LocationServiceStatus.Running)
+        {
+            // Horizontal
+            latitude = Input.location.lastData.latitude;
+            
+        
+            var location_dict = new Dictionary<string, string>
+            {
+                { "latitude", latitude.ToString("R") },
+            };
+
+
+            var content = new FormUrlEncodedContent(location_dict);
+
+            var response = await client.PostAsync("http://192.168.0.164:1142/stream", content);
+
+            Debug.Log(response);
+        }
+     }
+
+     IEnumerator getLatLong(){
+
+        // First, check if user has location service enabled
+        if (!Input.location.isEnabledByUser){
+
+            Debug.Log("Location not enabled");
+             yield break;    
+        }
+
+           
+
+        // Start service before querying location
+        Input.location.Start();
+
+
+        // Wait until service initializes
+        int maxWait = 20;
+        while (Input.location.status == LocationServiceStatus.Initializing && maxWait > 0)
+        {
+            Debug.Log("Initializing");
+
+            yield return new WaitForSeconds(1);
+            maxWait--;
+        }
+
+        // Service didn't initialize in 20 seconds
+        if (maxWait < 1)
+        {
+            Debug.Log("Timed out");
+            yield break;
+        }
+
+        // Connection has failed
+        if (Input.location.status == LocationServiceStatus.Failed)
+        {
+            Debug.Log("Unable to determine device location");
+            yield break;
+        }
+        else
+        {
+
+            // Access granted and location value could be retrieved
+            Debug.Log("Location: " + Input.location.lastData.latitude + " " + Input.location.lastData.longitude + " " + Input.location.lastData.altitude + " " + Input.location.lastData.horizontalAccuracy + " " + Input.location.lastData.timestamp);
+        }
+
+        // Stop service if there is no need to query location updates continuously
+        Input.location.Stop();
 
 
      }
