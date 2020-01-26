@@ -30,7 +30,7 @@ public class PoseData : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        //StartCoroutine(getLatLong());
+        Input.location.Start(1, 0.1f);
     }
 
     // Update is called once per frame
@@ -45,11 +45,9 @@ public class PoseData : MonoBehaviour
 
     	setPosePositions();
 
-    	timedPostPoseData();
+    	// timedPostPoseData();
 
-
-       //testLatitude();
-        
+    
     }
 
     /// <summary>
@@ -129,30 +127,6 @@ public class PoseData : MonoBehaviour
 
      }
 
-
-
-
-     async void testLatitude(){
-        
-        if (Input.location.status == LocationServiceStatus.Running)
-        {
-            // Horizontal
-            latitude = Input.location.lastData.latitude;
-            
-        
-            var location_dict = new Dictionary<string, string>
-            {
-                { "latitude", latitude.ToString("R") },
-            };
-
-
-            var content = new FormUrlEncodedContent(location_dict);
-
-            var response = await client.PostAsync("http://192.168.0.164:1142/stream", content);
-
-            Debug.Log(response);
-        }
-     }
 
      IEnumerator getLatLong(){
 
