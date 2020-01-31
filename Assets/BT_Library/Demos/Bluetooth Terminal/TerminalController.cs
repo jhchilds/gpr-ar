@@ -157,7 +157,7 @@ public class TerminalController : MonoBehaviour
 				if (msg != null && msg.Length > 0) {
 					string content = System.Text.ASCIIEncoding.ASCII.GetString(msg);
 					readDataText.add ("FROM: " + device.Name, " MESSAGE: " + content);
-					SendPoseToServer();
+                    Pose.Instance.postPoseData(); //Found in Pose.cs
 
 					string filepath = Application.persistentDataPath + "/read_remote.txt";
 					//Arduin BluetoothController is sending 'X' 
@@ -186,32 +186,6 @@ public class TerminalController : MonoBehaviour
 	{
 		BluetoothAdapter.OnDevicePicked -= HandleOnDevicePicked;
 		BluetoothAdapter.OnDeviceOFF -= HandleOnDeviceOff;
-	}
-
-
-	async void SendPoseToServer ()
-	{
-		x = Frame.Pose.position.x;
-    	y = Frame.Pose.position.y;
-    	z = Frame.Pose.position.z;
-
-
-
-    	var values = new Dictionary<string, string>{
-			{ "x", x.ToString("R") },
-			{ "y", y.ToString("R") },
-			{ "z", z.ToString("R") },
-		};
-
-		
-
-		var content = new FormUrlEncodedContent(values);
-
-		var response = await client.PostAsync("http://192.168.0.164:1142/stream", content);
-
-		var responseString = await response.Content.ReadAsStringAsync();
-
-		Debug.Log(responseString);
 	}
 
 }
