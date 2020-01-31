@@ -38,7 +38,9 @@ public class Pose : MonoBehaviour
         var values = new Dictionary<string, string>{
             { "x", x.ToString("R") },
             { "y", y.ToString("R") },
-            { "z", z.ToString("R") }
+            { "z", z.ToString("R") },
+            { "lat", GPS.Instance.latitude.ToString("R")},
+            { "lon", GPS.Instance.longitude.ToString("R")}
         };
 
         var content = new FormUrlEncodedContent(values);

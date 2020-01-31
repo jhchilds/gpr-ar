@@ -13,7 +13,7 @@ using System.IO;
 
 public class TerminalController : MonoBehaviour
 {
-	// Mauricio Tango
+	
 	public Text devicNameText;
 	public Text status;
 
